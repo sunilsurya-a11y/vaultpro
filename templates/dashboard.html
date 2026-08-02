@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Vault</title>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 20px; max-width: 650px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; box-sizing: border-box; }
+        input { background: #0f172a; border: 1px solid #334155; color: white; }
+        button { background: #0284c7; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .logout { background: #ef4444; padding: 6px 12px; border-radius: 6px; color: white; text-decoration: none; font-size: 14px; }
+        ul { list-style: none; padding: 0; }
+        li { background: #334155; padding: 15px; margin: 12px 0; border-radius: 8px; }
+        .file-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        a.file-link { color: #38bdf8; text-decoration: none; font-weight: bold; }
+        .badge { background: #10b981; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        .badge-locked { background: #f59e0b; }
+        .rename-form { display: flex; gap: 8px; margin-top: 8px; }
+        .rename-form input { margin: 0; padding: 8px; font-size: 13px; }
+        .rename-form button { margin: 0; width: auto; padding: 8px 14px; background: #475569; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>📁 {{ full_name }}'s Vault</h2>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+
+    <!-- Edit Profile Name -->
+    <div class="card">
+        <h3>👤 Profile Settings</h3>
+        <form action="/profile" method="POST">
+            <input type="text" name="full_name" value="{{ full_name }}" placeholder="Change Display Name">
+            <button type="submit" style="background: #475569;">Update Name</button>
+        </form>
+    </div>
+
+    <!-- Upload File -->
+    <div class="card">
+        <h3>📤 Upload New File to Vault</h3>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="password" name="file_password" placeholder="Optional File Password (for extra protection)">
+            <button type="submit">Store File securely</button>
+        </form>
+    </div>
+
+    <!-- User Files -->
+    <div class="card">
+        <h3>📦 Your Saved Files</h3>
+        <ul>
+            {% for f in files %}
+                <li>
+                    <div class="file-header">
+                        <span>
+                            📄 <b>{{ f[1] }}</b>
+                            {% if f[2] %}<span class="badge badge-locked">🔒 Protected</span>{% else %}<span class="badge">🌐 Direct</span>{% endif %}
+                        </span>
+                        <a href="/file/{{ f[0] }}" target="_blank" class="file-link">Open File</a>
+                    </div>
+                    
+                    <!-- Rename Form -->
+                    <form action="/rename/{{ f[0] }}" method="POST" class="rename-form">
+                        <input type="text" name="new_name" placeholder="Rename file..." required>
+                        <button type="submit">Rename</button>
+                    </form>
+                </li>
+            {% else %}
+                <p style="color: #94a3b8;">No files stored in your vault yet.</p>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>
