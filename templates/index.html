@@ -43,3 +43,27 @@
     </div>
 </body>
 </html>
+
+<input type="file" id="fileInput">
+<button onclick="saveFile()">Save in Browser</button>
+
+<script>
+  let db;
+  const request = indexedDB.open("VaultProDB", 1);
+
+  request.onupgradeneeded = (e) => {
+    db = e.target.result;
+    db.createObjectStore("files", { keyPath: "name" });
+  };
+
+  request.onsuccess = (e) => { db = e.target.result; };
+
+  function saveFile() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return;
+
+    const tx = db.transaction("files", "readwrite");
+    tx.objectStore("files").put({ name: file.name, fileData: file });
+    alert("Saved permanently in browser!");
+  }
+</script>
