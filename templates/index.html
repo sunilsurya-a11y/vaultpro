@@ -1,70 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta name="google-site-verification" content="6ZcJ02t97qIb69aM5LTsGxsMPS4mPlYG_czt-NUW0C8" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Share Website</title>
-    <style>
-        body { font-family: system-ui, sans-serif; padding: 20px; max-width: 600px; margin: auto; background-color: #f8fafc; color: #0f172a; }
-        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        input[type="file"], input[type="password"] { width: 100%; padding: 12px; margin: 8px 0 16px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; }
-        button { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; }
-        ul { list-style: none; padding: 0; }
-        li { background: #f1f5f9; margin: 8px 0; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
-        a { color: #2563eb; text-decoration: none; font-weight: bold; }
-    </style>
+    <meta name="google-site-verification" content="6ZcJ02t97qIb69aM5LTsGxsMPS4mPlYG_czt-NUW0C8" />
+    <title>VaultPro</title>
 </head>
 <body>
-    <h2>📁 PDF Share Web</h2>
-    <div class="card">
-        <h3>Upload PDF Document</h3>
-        <form action="/upload" method="POST" enctype="multipart/form-data">
-            <label><b>Choose PDF File:</b></label>
-            <input type="file" name="pdf" accept="application/pdf" required>
+    <h1>Welcome to VaultPro</h1>
+    <input type="file" id="fileInput">
+    <button onclick="saveFile()">Save in Browser</button>
 
-            <label><b>Set Password (Optional):</b></label>
-            <input type="password" name="password" placeholder="Leave blank to keep public">
+    <script>
+      let db;
+      const request = indexedDB.open("VaultProDB", 1);
 
-            <button type="submit">Upload Document</button>
-        </form>
-    </div>
-    <div class="card">
-        <h3>🌐 Publicly Shared PDFs</h3>
-        <ul>
-            {% for pdf in public_pdfs %}
-                <li>
-                    <span>📄 {{ pdf[1] }}</span>
-                    <a href="/view/{{ pdf[0] }}" target="_blank">View PDF</a>
-                </li>
-            {% else %}
-                <p style="color: #64748b;">No public PDFs uploaded yet.</p>
-            {% endfor %}
-        </ul>
-    </div>
+      request.onupgradeneeded = (e) => {
+        db = e.target.result;
+        db.createObjectStore("files", { keyPath: "name" });
+      };
+
+      request.onsuccess = (e) => { db = e.target.result; };
+
+      function saveFile() {
+        const file = document.getElementById("fileInput").files[0];
+        if (!file) return;
+
+        const tx = db.transaction("files", "readwrite");
+        tx.objectStore("files").put({ name: file.name, fileData: file });
+        alert("Saved permanently in browser!");
+      }
+    </script>
 </body>
 </html>
-
-<input type="file" id="fileInput">
-<button onclick="saveFile()">Save in Browser</button>
-
-<script>
-  let db;
-  const request = indexedDB.open("VaultProDB", 1);
-
-  request.onupgradeneeded = (e) => {
-    db = e.target.result;
-    db.createObjectStore("files", { keyPath: "name" });
-  };
-
-  request.onsuccess = (e) => { db = e.target.result; };
-
-  function saveFile() {
-    const file = document.getElementById("fileInput").files[0];
-    if (!file) return;
-
-    const tx = db.transaction("files", "readwrite");
-    tx.objectStore("files").put({ name: file.name, fileData: file });
-    alert("Saved permanently in browser!");
-  }
-</script>
