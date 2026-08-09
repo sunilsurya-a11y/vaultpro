@@ -8,7 +8,7 @@ def home():
 
 @app.route('/robots.txt')
 def robots():
-    content = "User-agent: *\nAllow: /\nSitemap: https://vaultpro-obz6.onrender.com/sitemap.xml\n"
+    content = "User-agent: *\nAllow: /\n"
     return Response(content, mimetype="text/plain")
 
 if __name__ == '__main__':
