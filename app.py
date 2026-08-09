@@ -1,6 +1,11 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template
 
 app = Flask(__name__)
+
+@app.after_request
+def add_header(response):
+    response.headers['X-Robots-Tag'] = 'index, follow'
+    return response
 
 @app.route('/')
 def home():
@@ -8,8 +13,7 @@ def home():
 
 @app.route('/robots.txt')
 def robots():
-    content = "User-agent: *\nAllow: /\n"
-    return Response(content, mimetype="text/plain")
+    return "User-agent: *\nAllow: /\n", 200, {'Content-Type': 'text/plain'}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

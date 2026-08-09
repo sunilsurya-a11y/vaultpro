@@ -1,35 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="6ZcJ02t97qIb69aM5LTsGxsMPS4mPlYG_czt-NUW0C8" />
+    <meta name="robots" content="index, follow">
     <title>VaultPro</title>
 </head>
 <body>
     <h1>Welcome to VaultPro</h1>
-    <input type="file" id="fileInput">
-    <button onclick="saveFile()">Save in Browser</button>
-
-    <script>
-      let db;
-      const request = indexedDB.open("VaultProDB", 1);
-
-      request.onupgradeneeded = (e) => {
-        db = e.target.result;
-        db.createObjectStore("files", { keyPath: "name" });
-      };
-
-      request.onsuccess = (e) => { db = e.target.result; };
-
-      function saveFile() {
-        const file = document.getElementById("fileInput").files[0];
-        if (!file) return;
-
-        const tx = db.transaction("files", "readwrite");
-        tx.objectStore("files").put({ name: file.name, fileData: file });
-        alert("Saved permanently in browser!");
-      }
-    </script>
 </body>
 </html>
